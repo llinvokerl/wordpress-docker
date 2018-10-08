@@ -1,0 +1,67 @@
+version: '3'
+services:
+    nginx_instance:
+        image: nginx
+        ports:
+            - "80:80"
+        links: 
+            - fpm_instance
+        volumes:
+            - ./nginx/default:/etc/nginx/conf.d/default.conf
+            - ./logs/nginx_access.log:/var/log/nginx/default_access.log
+            - ./logs/nginx_error.log:/var/log/nginx/default_error.log
+              #restart: always
+
+    fpm_instance:
+        #image: php:fpm
+        #fpm这种可能会有扩展的东西还是自己写dockerfile比较好
+        build: .
+        expose:
+            - "9000"
+        volumes:
+            - ./fpm/:/usr/share/nginx/html
+        links:
+            - mysql_instance
+            - redis_instance
+        depends_on:
+            - mysql_instance
+            - redis_instance
+              #restart: always
+
+    mysql_instance:
+        image: mysql:8.0
+        ports:
+            - "3306:3306"
+        environment: 
+            #root密码
+            MYSQL_ROOT_PASSWORD: "liusurong"
+            # 创建一个db和user
+            MYSQL_DATABASE: 'wordpress'
+            MYSQL_USER: 'liu'
+            MYSQL_PASSWORD: 'liusurong'
+            #restart: always
+
+    redis_instance:
+        image: redis
+        command: redis-server /usr/local/etc/redis/redis.conf
+        volumes:
+            - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+        ports:
+            - "6379:6379"
+        # expose:
+            # - "6379"
+            #restart: always
+
+    wordpress:
+        depends_on:
+            - mysql_instance
+        image: wordpress
+        ports:
+            - "8000:80"
+              #restart: always
+        environment:
+            WORDPRESS_DB_HOST: mysql_instance:3306
+            WORDPRESS_DB_USER: 'liu'
+            WORDPRESS_DB_PASSWORD: 'liusurong'
+
+
