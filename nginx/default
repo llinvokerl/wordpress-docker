@@ -1,5 +1,18 @@
 server {
-    server_name 127.0.0.1; 
+    server_name rosas.cc www.rosas.cc;
+    #server_name www.trustytahr.com trustytahr.com; 
+    listen 80;
+    location / {
+        proxy_redirect off; 
+        proxy_set_header host $host;
+        proxy_set_header x-real-ip $remote_addr;
+        proxy_set_header x-forwarded-for $proxy_add_x_forwarded_for; 
+        proxy_pass http://wordpress;
+    }
+}
+server {
+    #server_name rosas.cc www.rosas.cc;
+    server_name www.trustytahr.com trustytahr.com; 
     listen 80;
     root /usr/share/nginx/html;
 	gzip on;
@@ -7,16 +20,7 @@ server {
 	error_log /var/log/nginx/default_error.log ;
 
     location ~ \.php$ {
-        client_max_body_size  150m;
         include fastcgi_params;
-        fastcgi_connect_timeout 300;
-        fastcgi_send_timeout 300;
-        fastcgi_read_timeout 300;
-        
-        fastcgi_buffer_size 16k;
-        fastcgi_buffers 16 16k;
-        fastcgi_busy_buffers_size 16k;
-        
         fastcgi_pass  fpm_instance:9000;
         fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
     }
