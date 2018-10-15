@@ -12,7 +12,7 @@ services:
               #restart: always
         depends_on:
             - fpm_instance
-            - wordpress
+            - wordpress_instance
 
     fpm_instance:
         #image: php:fpm
@@ -24,19 +24,17 @@ services:
             - ./www:/usr/share/nginx/html
         depends_on:
             - mysql_instance
-            - redis_instance
+              #- redis_instance
 
     mysql_instance:
         image: mysql:8.0
-        ports:
-            - "3306:3306"
         environment: 
             #root密码
-            MYSQL_ROOT_PASSWORD: "liusurong"
+            MYSQL_ROOT_PASSWORD: "123456"
             # 创建一个db和user
             MYSQL_DATABASE: 'wordpress'
-            MYSQL_USER: 'liu'
-            MYSQL_PASSWORD: 'liusurong'
+            MYSQL_USER: 'wp'
+            MYSQL_PASSWORD: '123456'
             #restart: always
 
     redis_instance:
@@ -44,23 +42,17 @@ services:
         command: redis-server /usr/local/etc/redis/redis.conf
         volumes:
             - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
-        ports:
-            - "6379:6379"
-        # expose:
-            # - "6379"
             #restart: always
 
-    wordpress:
+    wordpress_instance:
         depends_on:
             - mysql_instance
             - redis_instance
         image: wordpress
-        #        ports:
-        #   - "8100:80"
               #restart: always
         environment:
             WORDPRESS_DB_HOST: mysql_instance:3306
-            WORDPRESS_DB_USER: 'liu'
-            WORDPRESS_DB_PASSWORD: 'liusurong'
+            WORDPRESS_DB_USER: 'wp'
+            WORDPRESS_DB_PASSWORD: '123456'
 
 
