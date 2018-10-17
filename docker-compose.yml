@@ -10,7 +10,7 @@ services:
             - ./nginx/default:/etc/nginx/conf.d/default.conf
             - ./logs/nginx_access.log:/var/log/nginx/default_access.log
             - ./logs/nginx_error.log:/var/log/nginx/default_error.log
-              #restart: always
+        restart: always
         depends_on:
             - fpm_instance
             - wordpress_instance
@@ -36,7 +36,7 @@ services:
             MYSQL_DATABASE: 'wordpress'
             MYSQL_USER: 'wp'
             MYSQL_PASSWORD: '123456'
-            #restart: always
+        restart: always
 
     redis_instance:
         image: redis
@@ -44,14 +44,14 @@ services:
         command: redis-server /usr/local/etc/redis/redis.conf
         volumes:
             - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
-            #restart: always
+        restart: always
 
     wordpress_instance:
         depends_on:
             - mysql_instance
             - redis_instance
         image: wordpress
-              #restart: always
+        restart: always
         environment:
             WORDPRESS_DB_HOST: mysql_instance:3306
             WORDPRESS_DB_USER: 'wp'
