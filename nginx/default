@@ -1,6 +1,6 @@
 server {
+    # you can replace the domain below with your own domain or 127.0.0.1
     server_name rosas.cc www.rosas.cc;
-    #server_name www.trustytahr.com trustytahr.com; 
     listen 80;
     location / {
         proxy_redirect off; 
@@ -11,7 +11,7 @@ server {
     }
 }
 server {
-    #server_name rosas.cc www.rosas.cc;
+    # you can replace the domain below with your own domain or 127.0.0.1
     server_name www.trustytahr.com trustytahr.com; 
     listen 80;
     root /usr/share/nginx/html;
