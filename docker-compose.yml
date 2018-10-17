@@ -5,7 +5,8 @@ services:
         ports:
             - "80:80"
         volumes:
-            - ./www:/usr/share/nginx/html
+            # not indispensable since it would be set by php-fpm instance before the startup of nginx instance
+            # - ./www:/usr/share/nginx/html
             - ./nginx/default:/etc/nginx/conf.d/default.conf
             - ./logs/nginx_access.log:/var/log/nginx/default_access.log
             - ./logs/nginx_error.log:/var/log/nginx/default_error.log
@@ -17,6 +18,7 @@ services:
     fpm_instance:
         #image: php:fpm
         #fpm这种可能会有扩展的东西还是自己写dockerfile比较好
+        # build a fpm image with redis and mysqli extension
         build: .
         expose:
             - "9000"
@@ -24,14 +26,14 @@ services:
             - ./www:/usr/share/nginx/html
         depends_on:
             - mysql_instance
-              #- redis_instance
+            - redis_instance
 
     mysql_instance:
         image: mysql:8.0
         environment: 
-            #root密码
+            # set root password
             MYSQL_ROOT_PASSWORD: "123456"
-            # 创建一个db和user
+            # create a database named "wordpress" and create a user along with its password
             MYSQL_DATABASE: 'wordpress'
             MYSQL_USER: 'wp'
             MYSQL_PASSWORD: '123456'
@@ -39,6 +41,7 @@ services:
 
     redis_instance:
         image: redis
+        # start Redis instance with specified config file
         command: redis-server /usr/local/etc/redis/redis.conf
         volumes:
             - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
