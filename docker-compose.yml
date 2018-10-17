@@ -19,7 +19,7 @@ services:
         #image: php:fpm
         #fpm这种可能会有扩展的东西还是自己写dockerfile比较好
         # build a fpm image with redis and mysqli extension
-        build: .
+        build: ./fpm/
         expose:
             - "9000"
         volumes:
