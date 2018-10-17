@@ -18,7 +18,7 @@ services:
     fpm_instance:
         #image: php:fpm
         # build a fpm image with redis and mysqli extension
-        build: .
+        build: ./fpm/
         expose:
             - "9000"
         volumes:
